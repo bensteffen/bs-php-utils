@@ -1,4 +1,6 @@
-<?php
+<?php 
+
+namespace bensteffen\utils;
 
 function stringStart($string, $query) {
     return substr($string, 0, strlen($query)) === $query;

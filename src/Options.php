@@ -1,5 +1,7 @@
 <?php
 
+namespace bensteffen\utils;
+
 class Options {
     private $defaults = [];
     private $values = [];
