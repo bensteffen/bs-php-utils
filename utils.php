@@ -26,6 +26,13 @@ function isAssoc(array $arr) {
     return array_keys($arr) !== range(0, count($arr) - 1);
 }
 
+function assocShift(&$arr) {
+    list($firstKey) = array_keys($arr);
+    $removed = [ $firstKey, $arr[$firstKey] ];
+    unset($arr[$firstKey]);
+    return $removed;
+}
+
 function extractByKey($key, $array) {
     $output = [];
     if ($array !== null) {
@@ -48,12 +55,15 @@ function extractValues($keys, $data) {
     return $values;
 }
 
-function extractArray($keys, $baseArray) {
+function extractArray($keys, $baseArray, $flatten = false) {
     $extracted = [];
     foreach($keys as $k) {
         if (array_key_exists($k, $baseArray)) {
             $extracted[$k] = $baseArray[$k];
         }
+    }
+    if ($flatten && count($extracted) === 1) {
+        $extracted = array_pop($extracted);
     }
     return $extracted;
 }
