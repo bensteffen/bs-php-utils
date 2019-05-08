@@ -10,7 +10,7 @@ class Options {
             $this->values[$name] = $value;
         }
         if ($valueSet) {
-            $this->setValues();
+            $this->setValues($valueSet);
         }
     }
 
@@ -45,4 +45,3 @@ class Options {
     }
 }
 
-?>
