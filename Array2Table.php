@@ -3,6 +3,7 @@
 class Array2Table {
     protected $array;
     protected $header;
+    protected $columnWidths;
 
     public function __construct($array = null) {
         if ($array) {
@@ -21,10 +22,45 @@ class Array2Table {
                 throw(new Exception('Array2Table.setArray: All items in array must have the same key set.'));
             }
         }
+        $this->columnWidths = null;
     }
 
     public function toAscii() {
+        $headerRow = $this->createAsciiRow($this->header);
+        $rowLength = strlen($headerRow);
+        $rows = [];
+        array_push($rows, str_repeat('=', $rowLength));
+        array_push($rows, $headerRow);
+        array_push($rows, str_repeat('-', $rowLength));
+        foreach ($this->array as $row) {
+            array_push($rows, $this->createAsciiRow(array_values($row)));
+        }
+        array_push($rows, str_repeat('=', $rowLength));
+        return implode("\n", $rows);
+    }
 
+    protected function createAsciiRow($row) {
+        $widths = $this->getColumnWidths();
+        $rowString = '';
+        /**
+         * TODO wrap too long entries
+         */
+        // $lines = [];
+        // foreach ($row as $j => $val) {
+        //     $val = wordwrap($val, 25, "\n");
+        //     array_push($lines, explode("\n", $val));
+        // }
+        // $lineCount = max(array_map(function($l) { return count($l); }, $lines));
+        // foreach ($lines as $j => $l) {
+        //     while (count($l) < $lineCount) {
+        //         array_push($l, '');
+        //     }
+        //     $lines[$j] = $l;
+        // }
+        foreach ($row as $j => $val) {
+            $rowString .= $val . str_repeat(' ', $widths[$j] - strlen($val) + 4);
+        }
+        return $rowString;
     }
 
     public function toHtml() {
@@ -52,7 +88,18 @@ class Array2Table {
         return '<tr>'.implode('',$td).'</tr>';
     }
 
-    protected function getColumnWidth($columnIndex) {
-        
+    protected function getColumnWidths() {
+        if (!$this->columnWidths) {
+            $widths = [];
+            foreach ($this->header as $h) {
+                $column = array_merge([$h], array_column($this->array, $h));
+                $lengths = array_map(function($val) {
+                    return strlen($val);
+                }, $column);
+                array_push($widths, max($lengths));
+            }
+            $this->columnWidths = $widths;
+        }
+        return $this->columnWidths;
     }
 }
