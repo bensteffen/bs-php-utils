@@ -15,6 +15,16 @@ class Array2Table {
         if (count($array) === 0) {
             throw(new Exception('Array2Table.setArray: count of $array must be > 0.'));
         }
+        foreach ($array as $i => $row) {
+            foreach ($row as $name => $value) {
+                if (is_array($value)) {
+                    $value = json_encode($value);
+                }
+                $value = str_replace("\n", '\n', $value);
+                $row[$name] = $value;
+            }
+            $array[$i] = $row;
+        }
         $this->array = $array;
         $this->header = array_keys($array[0]);
         foreach($array as $row) {
